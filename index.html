@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>MY APP</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <form action="/quotes" method="POST">
+    <input type="text" placeholder="name" name="name">
+    <input type="text" placeholder="quote" name="quote">
+    <label for="overall">Overall impression</label>
+    <input type="number" name="overall" min="1" max="5">
+    <label for="service">Service staff</label>
+    <input type="number" name="service" min="1" max="5">
+    <label for="price">Price level</label>
+    <input type="number" name="price" min="1" max="5">
+    <label for="product">Product range</label>
+    <input type="number" name="product" min="1" max="5">
+    <label for="share">Share shop</label>
+    <input type="number" name="share" min="1" max="5">
+    <button type="submit">Submit</button>
+  </form>
+</body>
+
+</html>
