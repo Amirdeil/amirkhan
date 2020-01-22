@@ -2,9 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
-const dbUrl = `mongodb://${process.env.login}:${process.env.password}@${process.env.address}.mlab.com:${process.env.port}/${process.env.dbname}`;
+const dbUrl = `mongodb://${process.env.login}:${process.env.password}@${process.env.address}.mlab.com:${process.env.dbport}/${process.env.dbname}`;
 
-let collection;
+let collection; 
+
+const port = process.env.PORT || 8000;
+
 
 MongoClient.connect(dbUrl)
   .then(client => client.db(process.env.dbname))
@@ -27,8 +30,8 @@ function init() {
     express.static(__dirname + "/node_modules/bootstrap/dist/css")
   );
 
-  app.listen(3000, function() {
-    console.log("listening on 3000");
+  app.listen(port, function() {
+    console.log(`listening on ${port}`);
   });
 
   app.get("/", function(req, res) {
