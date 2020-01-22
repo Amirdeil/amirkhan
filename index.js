@@ -1,14 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
-const credentials = require('./credentials.json');
 
-const dbUrl = `mongodb://${credentials.login}:${credentials.password}@${credentials.address}.mlab.com:${credentials.port}/${credentials.dbname}`;
+const dbUrl = `mongodb://${process.env.login}:${process.env.password}@${process.env.address}.mlab.com:${process.env.port}/${process.env.dbname}`;
 
 let collection;
 
 MongoClient.connect(dbUrl)
-  .then(client => client.db(credentials.dbname))
+  .then(client => client.db(process.env.dbname))
   .then(db => db.collection('reviews'))
   .then(coll => {
     collection = coll;
