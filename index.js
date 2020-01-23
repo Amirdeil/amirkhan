@@ -11,7 +11,6 @@ let collection;
 const port = process.env.PORT || 8000;
 
 let collection;
-let cookedData;
 
 MongoClient.connect(dbUrl)
   .then(client => client.db(process.env.dbname))
@@ -54,9 +53,6 @@ function init() {
   });
 
   app.get('/test', function (req, res) {
-    collection.find().toArray().then((data2) => {
-      console.log('hello', data2);
-    })
     res.render("test", { title: "Hey", message: "Hello there!" });
   });
 
