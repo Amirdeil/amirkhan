@@ -7,7 +7,6 @@ const analyzer = require('./stat-analyzer');
 const dbUrl = `mongodb://${credentials.login}:${credentials.password}@${credentials.address}.mlab.com:${credentials.port}/${credentials.dbname}`;
 
 let collection;
-let cookedData;
 
 MongoClient.connect(dbUrl)
   .then(client => client.db(credentials.dbname))
@@ -50,9 +49,6 @@ function init() {
   });
 
   app.get('/test', function (req, res) {
-    collection.find().toArray().then((data2) => {
-      console.log('hello', data2);
-    })
     res.render("test", { title: "Hey", message: "Hello there!" });
   });
 
