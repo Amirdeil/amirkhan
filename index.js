@@ -22,7 +22,11 @@ function init() {
 
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(express.static("public"));
+  app.use('/scripts', express.static("scripts"));
   app.set('view engine', 'pug');
+  app.use(
+    '/charts', express.static(__dirname + '/node_modules/chart.js/dist/')
+  )
   app.use(
     "/css",
     express.static(__dirname + "/node_modules/bootstrap/dist/css")
