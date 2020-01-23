@@ -2,10 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const credentials = require('./credentials.json');
+const analyzer = require('./stat-analyzer');
 
 const dbUrl = `mongodb://${credentials.login}:${credentials.password}@${credentials.address}.mlab.com:${credentials.port}/${credentials.dbname}`;
 
 let collection;
+let cookedData;
 
 MongoClient.connect(dbUrl)
   .then(client => client.db(credentials.dbname))
@@ -14,7 +16,9 @@ MongoClient.connect(dbUrl)
     collection = coll;
     return collection.find().toArray();
   })
-  .then(result => console.log(result))
+  .then(result => {
+    console.log(analyzer(result));
+  })
   .then(() => init());
 
 function init() {
@@ -45,7 +49,19 @@ function init() {
     res.redirect("/");
   });
 
-  app.get('/test', function(req, res) {
+  app.get('/test', function (req, res) {
+    collection.find().toArray().then((data2) => {
+      console.log('hello', data2);
+    })
     res.render("test", { title: "Hey", message: "Hello there!" });
   });
+
+  app.get('/api/stats', function (req, res) {
+    collection
+      .find()
+      .toArray()
+      .then(data => {
+        res.json(analyzer(data))
+      });
+  })
 }
