@@ -10,8 +10,6 @@ let collection;
 
 const port = process.env.PORT || 8000;
 
-let collection;
-
 MongoClient.connect(dbUrl)
   .then(client => client.db(process.env.dbname))
   .then(db => db.collection('reviews'))
