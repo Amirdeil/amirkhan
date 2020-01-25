@@ -8,7 +8,14 @@ html
     
   body
     h3.m-2= 'Ratings'
-    canvas(id="myChart", width="400", height="400")
-    h3.m-2= 'Comments'
-    script(src="../charts/Chart.js")
-    script(src="../scripts/stats.js")
+    table.table.table-bordered.table-hover
+      tr
+        th.m-2 shop
+        th.m-2 email
+        th.m-2 comment
+      each review in reviews
+        tr
+          td.m-1= review.shop
+          td.m-1= review.email 
+          td.m-1= review.quote
+

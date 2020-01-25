@@ -1,11 +1,16 @@
-function analyzer(data) {
-  const sumNCount = data.reduce(averageReducer, {
-    overall: [0, 0],
-    service: [0, 0],
-    price: [0, 0],
-    product: [0, 0],
-    share: [0, 0]
-  });
+const shops = require('./shops/shops');
+
+let criteria;
+
+function analyzer(shopid, data) {
+  criteria = shops[shopid].map(criterion =>
+    criterion.split(' ')[0].toLowerCase()
+  );
+  const initial = criteria.reduce((acc, criterion) => {
+    acc[criterion] = [0, 0];
+    return acc;
+  }, {});
+  const sumNCount = data.reduce(averageReducer, initial);
   // eslint-disable-next-line array-callback-return
   Object.keys(sumNCount).map(criterion => {
     const [sum, count] = sumNCount[criterion];
@@ -23,7 +28,7 @@ function analyzer(data) {
 }
 
 function averageReducer(acc, current) {
-  ['overall', 'service', 'price', 'product', 'share'].forEach(prop => {
+  criteria.forEach(prop => {
     if (current[prop]) {
       acc[prop][0] += Number(current[prop]);
       acc[prop][1] += 1;

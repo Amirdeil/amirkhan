@@ -1,7 +1,7 @@
 let ctx;
 
 function init(data) {
-  const props = ['overall', 'service', 'price', 'product', 'share'];
+  const props = Object.keys(data);
   const averageRating = props.map(prop => data[prop][0]);
   ctx = document.querySelector('#myChart');
   // eslint-disable-next-line no-undef
@@ -45,7 +45,9 @@ function init(data) {
   });
 }
 
-fetch('../api/stats')
+const shopId = window.location.pathname.split('/').slice(-1);
+
+fetch(`../api/stats/${shopId}`)
   .then(res => res.json())
   .then(data => {
     init(data.stats);

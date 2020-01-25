@@ -18,9 +18,6 @@ MongoClient.connect(dbUrl)
     collection = coll;
     return collection.find().toArray();
   })
-  .then(result => {
-    console.log(analyzer(result));
-  })
   .then(() => init());
 
 function init() {
@@ -49,11 +46,31 @@ function init() {
 
   app.post('/review', (req, res) => {
     collection.insertOne(req.body);
-    res.redirect('/');
+    res.redirect(`/shop/${req.body.shop}`);
   });
 
-  app.get('/test', function(req, res) {
-    res.render('stats', { title: 'Hey', message: 'Hello there!' });
+  app.get('/stats/all', function(req, res) {
+    collection
+      .find()
+      .toArray()
+      .then(data => data.filter(review => review.shop))
+      .then(data => {
+        res.render('allStats', {
+          reviews: data
+        });
+      });
+  });
+
+  app.get('/stats/:id', function(req, res) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (shops.hasOwnProperty(req.params.id)) {
+      res.render('stats', {
+        criteria: shops[req.params.id],
+        shop: req.params.id
+      });
+    } else {
+      res.status(404).send();
+    }
   });
 
   app.get('/shop/:id', function(req, res) {
@@ -68,12 +85,13 @@ function init() {
     }
   });
 
-  app.get('/api/stats', function(req, res) {
+  app.get('/api/stats/:id', function(req, res) {
     collection
       .find()
       .toArray()
+      .then(data => data.filter(review => review.shop === req.params.id))
       .then(data => {
-        res.json(analyzer(data));
+        res.json(analyzer(req.params.id, data));
       });
   });
 }

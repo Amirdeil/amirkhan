@@ -1,19 +1,21 @@
 html
   head
-    title= 'Statistics'
+    title= shop
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='/css/bootstrap.min.css')
     
   body
+    h2.m-5= `RetailBack for ${shop.toUpperCase()}`
     form.m-5(action='/review', method='POST')
-      .form-group
-        label(for='name') Username
+      input(name='shop', value=shop, style='display: none')
+      #email-wrapper.form-group.d-none
+        label(for='email') Email address
         .input-group
           .input-group-prepend
-            span.input-group-text#inputGroupPrepend @
-          input.form-control(type='text', placeholder='name', aria-describedby="inputGroupPrepend", name="name", required)
+            span.input-group-text#inputGroupPrepend &#9993
+          input#input-email.form-control(type='email', placeholder='email@gmail.com', aria-describedby='inputGroupPrepend', name='email')
       .form-row
         each criterion in criteria
           .form-group.col-md
@@ -26,4 +28,19 @@ html
       .form-group
         textarea.form-control(name='quote', placeholder='Share your thoughts...', type='text')
       .form-group
-        button.btn.btn-primary.justify-content-center(type="submit") Submit
+        button.btn.btn-primary.justify-content-center(type='submit') Submit
+  #exampleModal.modal.d-none(role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5.modal-title#exampleModalLabel Thanks
+        .modal-body 
+          | You will get free promo points for your review.
+          br
+          | Would you like to submit your email, so you can redeem your 
+          span.text-primary rewards 
+          | later?
+        .modal-footer
+          button.btn.btn-secondary#submit-without(type='button') Submit without
+          button.btn.btn-primary#add-email(type='button') Add email
+  script(src='../scripts/form.js')
