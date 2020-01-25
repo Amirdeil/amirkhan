@@ -1,0 +1,29 @@
+html
+  head
+    title= 'Statistics'
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+    
+  body
+    form.m-5(action='/review', method='POST')
+      .form-group
+        label(for='name') Username
+        .input-group
+          .input-group-prepend
+            span.input-group-text#inputGroupPrepend @
+          input.form-control(type='text', placeholder='name', aria-describedby="inputGroupPrepend", name="name", required)
+      .form-row
+        each criterion in criteria
+          .form-group.col-md
+            - var shortName = criterion.split(' ')[0].toLowerCase()
+              label.my-1.mr-2(for=`${shortName}-input`)= criterion
+              select.custom-select.my-1.mr-sm-2(name=shortName, required, id= `${shortName}-input`)
+                option(disabled, selected, hidden, value='') Choose...
+                each value, index in ['One', 'Two', 'Three', 'Four', 'Five']
+                  option(value= index + 1)= value
+      .form-group
+        textarea.form-control(name='quote', placeholder='Share your thoughts...', type='text')
+      .form-group
+        button.btn.btn-primary.justify-content-center(type="submit") Submit
