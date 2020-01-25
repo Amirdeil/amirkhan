@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const MongoClient = require('mongodb').MongoClient;
+const path = require('path');
+const { MongoClient } = require('mongodb');
 const analyzer = require('./stat-analyzer');
+const shops = require('./shops/shops');
 
 const dbUrl = `mongodb://${process.env.login}:${process.env.password}@${process.env.address}.mlab.com:${process.env.dbport}/${process.env.dbname}`;
 
-let collection; 
+let collection;
 
 const port = process.env.PORT || 8000;
 
@@ -25,40 +27,53 @@ function init() {
   const app = express();
 
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(express.static("public"));
-  app.use('/scripts', express.static("scripts"));
+  app.use(express.static('public'));
+  app.use('/scripts', express.static('scripts'));
   app.set('view engine', 'pug');
   app.use(
-    '/charts', express.static(__dirname + '/node_modules/chart.js/dist/')
-  )
+    '/charts',
+    express.static(path.join(__dirname, '/node_modules/chart.js/dist/'))
+  );
   app.use(
-    "/css",
-    express.static(__dirname + "/node_modules/bootstrap/dist/css")
+    '/css',
+    express.static(path.join(__dirname, '/node_modules/bootstrap/dist/css'))
   );
 
   app.listen(port, function() {
     console.log(`listening on ${port}`);
   });
 
-  app.get("/", function(req, res) {
-    res.sendFile(__dirname + "/index.html");
+  app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, '/index.html'));
   });
 
-  app.post("/review", (req, res) => {
+  app.post('/review', (req, res) => {
     collection.insertOne(req.body);
-    res.redirect("/");
+    res.redirect('/');
   });
 
-  app.get('/test', function (req, res) {
-    res.render("test", { title: "Hey", message: "Hello there!" });
+  app.get('/test', function(req, res) {
+    res.render('stats', { title: 'Hey', message: 'Hello there!' });
   });
 
-  app.get('/api/stats', function (req, res) {
+  app.get('/shop/:id', function(req, res) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (shops.hasOwnProperty(req.params.id)) {
+      res.render('form', {
+        criteria: shops[req.params.id],
+        shop: req.params.id
+      });
+    } else {
+      res.status(404).send();
+    }
+  });
+
+  app.get('/api/stats', function(req, res) {
     collection
       .find()
       .toArray()
       .then(data => {
-        res.json(analyzer(data))
+        res.json(analyzer(data));
       });
-  })
+  });
 }
