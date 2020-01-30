@@ -40,8 +40,12 @@ function init() {
     console.log(`listening on ${port}`);
   });
 
-  app.get('/', function(req, res) {
+  app.get('/', function (req, res) {
+    const shopNames = Object.keys(shops);
     res.sendFile(path.join(__dirname, '/index.html'));
+    res.render('main', {
+      shops: shopNames
+    })
   });
 
   app.post('/review', (req, res) => {

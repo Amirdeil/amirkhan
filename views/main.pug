@@ -1,0 +1,16 @@
+html
+  head
+    title= 'Statistics'
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+  body
+    h3.m-2 Welcome to RetailBack Alpha
+    ul.list-group.m-2
+      each shop in shops
+        li.list-group-item.list-group-item-primary= shop.toUpperCase()
+        a.list-group-item.list-group-item-action(href=`/shop/${shop}`) Leave review
+        a.list-group-item.list-group-item-action(href=`/stats/${shop}`) Check stats
+      a.list-group-item.list-group-item-action(href="/stats/all") All reviews
+
