@@ -8,9 +8,7 @@ html
   body
     h3.m-2 Welcome to RetailBack Alpha
     ul.list-group.m-2
-      each shop in shops
-        li.list-group-item.list-group-item-primary= shop.toUpperCase()
-        a.list-group-item.list-group-item-action(href=`/shop/${shop}`) Leave review
-        a.list-group-item.list-group-item-action(href=`/stats/${shop}`) Check stats
-      a.list-group-item.list-group-item-action(href="/stats/all") All reviews
+      each section in sections
+        li.list-group-item.list-group-item-primary= section.toUpperCase()
+        a.list-group-item.list-group-item-action(href=`/section/${section}`) Leave feedback
 

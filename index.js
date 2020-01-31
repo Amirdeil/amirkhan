@@ -1,24 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { MongoClient } = require('mongodb');
-const analyzer = require('./stat-analyzer');
-const shops = require('./shops/shops');
+const TelegramBot = require('node-telegram-bot-api');
+const { sections } = require('./populate/sections');
 
-const dbUrl = `mongodb://${process.env.login}:${process.env.password}@${process.env.address}.mlab.com:${process.env.dbport}/${process.env.dbname}`;
-
-let collection;
+const token = process.env.bottoken;
+const { tgroomname } = process.env;
+const bot = new TelegramBot(token, { polling: true });
 
 const port = process.env.PORT || 8000;
 
-MongoClient.connect(dbUrl)
-  .then(client => client.db(process.env.dbname))
-  .then(db => db.collection('reviews'))
-  .then(coll => {
-    collection = coll;
-    return collection.find().toArray();
-  })
-  .then(() => init());
+init();
 
 function init() {
   const app = express();
@@ -40,62 +32,29 @@ function init() {
     console.log(`listening on ${port}`);
   });
 
-  app.get('/', function (req, res) {
-    const shopNames = Object.keys(shops);
-    res.sendFile(path.join(__dirname, '/index.html'));
-    res.render('main', {
-      shops: shopNames
-    })
+  app.get('/', function(req, res) {
+    res.render('main', { sections });
   });
 
-  app.post('/review', (req, res) => {
-    collection.insertOne(req.body);
-    res.redirect(`/shop/${req.body.shop}`);
-  });
-
-  app.get('/stats/all', function(req, res) {
-    collection
-      .find()
-      .toArray()
-      .then(data => data.filter(review => review.shop))
-      .then(data => {
-        res.render('allStats', {
-          reviews: data
-        });
-      });
-  });
-
-  app.get('/stats/:id', function(req, res) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (shops.hasOwnProperty(req.params.id)) {
-      res.render('stats', {
-        criteria: shops[req.params.id],
-        shop: req.params.id
-      });
-    } else {
-      res.status(404).send();
+  app.post('/feedback', (req, res) => {
+    res.redirect(`/`);
+    const { section, text } = req.body;
+    if (!section || !text) {
+      return;
     }
+    bot
+      .sendMessage(`@${tgroomname}`, `${section}:\n${text}`)
+      .catch(e => console.log(e));
   });
 
-  app.get('/shop/:id', function(req, res) {
+  app.get('/section/:id', function(req, res) {
     // eslint-disable-next-line no-prototype-builtins
-    if (shops.hasOwnProperty(req.params.id)) {
+    if (sections.includes(req.params.id)) {
       res.render('form', {
-        criteria: shops[req.params.id],
-        shop: req.params.id
+        section: req.params.id
       });
     } else {
       res.status(404).send();
     }
-  });
-
-  app.get('/api/stats/:id', function(req, res) {
-    collection
-      .find()
-      .toArray()
-      .then(data => data.filter(review => review.shop === req.params.id))
-      .then(data => {
-        res.json(analyzer(req.params.id, data));
-      });
   });
 }
